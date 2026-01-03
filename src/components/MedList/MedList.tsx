@@ -16,19 +16,18 @@ function MedList({onRemove, onAdd, setting, data, onToggle}: Props) {
   return (
     <div>
         <div>
-            {data.map((item) => (
+            {data.map((item, index) => (
                 <div className={styles.card}>
             <ul className="list bg-base-100 rounded-box">
-                <li className={[`list-row`, styles.item].join(' ')} key={item.name}> 
-                    <div>{item.name}</div>
-                    <div>{item.portion}</div>
+                <li className={[`list-row`, styles.item].join(' ')} key={index}> 
+                    <div className={styles.name}>{item.name}</div>
+                    <div className={styles.portion}>{item.portion}</div>
                     {/* <div>{item.taken ? "activo" : "desactivo"}</div> */}
-                    <CheckBox checked = {item.taken} onChange={() => onToggle(item.name)}/>
+                    <CheckBox checked = {item.taken} onChange={() => onToggle(item.name)} disabled = { item.taken }/>
                     {setting && 
-                        <Button onClick={() => onRemove(item.name)} typeButton="error">eliminar</Button>
+                        <Button onClick={() => onRemove(item.name)} typeButton="error">Eliminar</Button>
                     }
                 </li>
-                
             </ul>
         </div>
             ))}
@@ -37,7 +36,7 @@ function MedList({onRemove, onAdd, setting, data, onToggle}: Props) {
             {
             setting && 
             <div className={styles.buttons}>
-                <Button onClick={onAdd} typeButton="success">agregar</Button>
+                <Button onClick={onAdd} typeButton="success">Agregar</Button>
             </div>
             }
         </div>

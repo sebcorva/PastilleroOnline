@@ -1,18 +1,22 @@
-import { Settings } from 'lucide-react';
+import { Settings, CirclePlus } from 'lucide-react';
 import styles from "./Icon.module.css";
 
 type Props = {
-    typeButton: string;
-    onClick : () => void;
+    onClick? : () => void;
+    type: keyof typeof iconMap;
 }
 
-function icon({typeButton, onClick}: Props) {
+const iconMap = {
+  settings: Settings,
+  plus: CirclePlus,
+};
 
-    const classIcon = styles[typeButton];
+function icon({onClick, type}: Props) {
+
+  const SelectedIcon = iconMap[type];
 
   return (
-    <Settings onClick={onClick}/>
-    
+    <SelectedIcon onClick={onClick} className={styles.icon}/>
   )
 }
 

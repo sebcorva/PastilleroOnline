@@ -2,12 +2,38 @@ import Tabs from "./components/tabs/Tabs";
 import Icon from "./components/icon/Icon";
 import MedList from "./components/MedList/MedList";
 import styles from "./App.module.css";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function App() {
   
   const [activeTab, setActiveTab] = useState("Desayuno");
-  const [setting, setSetting] = useState(false)
+  const [setting, setSetting] = useState(false);
+  const [todayDate, setTodayDate] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getDate = async () => {
+      try {
+        const response = await fetch("http://worldtimeapi.org/api/timezone/America/Argentina/Salta");
+        const data = await response.json();
+
+        const date = new Date(data.datetime);
+
+        const dayString = date.toLocaleDateString('es-ES', { weekday: 'long'});
+        const dayNumber = date.getDate();
+        const monthString = date.toLocaleDateString('es-ES', { month: 'long'});
+
+        const formatDate = `${dayString.charAt(0).toUpperCase() + dayString.slice(1)} ${dayNumber} de ${monthString.charAt(0).toUpperCase() + monthString.slice(1)}`;
+
+        setTodayDate(formatDate);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error: ", error);
+        setLoading(false);
+      }
+    };
+    getDate();
+  }, []);
 
   const handleSettings = () => {
     setSetting(!setting)
@@ -31,43 +57,61 @@ function App() {
             { name: 'Sertralina', portion: '1 capsula', taken: false},
         ]
     });
+
+  const tabs = Object.keys(lists);
+
+  const handleTab = () => {
+    const input = prompt("Nombre nueva pestaña: ")
+    if (!input) return;
+
+    const tabName = input.trim();
+    if (lists[tabName]) {
+        alert("Esa pestaña ya existe");
+        return;
+      }
+
+    setLists({...lists, [tabName]: []});
+
+    setActiveTab(tabName);
+    };
   
+
   const handleAdd = () => {
-        const name = prompt("Nombre medicamento: ");
-        const portion = prompt("Porcion a tomar: ");
+      const name = prompt("Nombre medicamento: ");
+      const portion = prompt("Porcion a tomar: ");
 
-        if (name && portion) {
-            const newMed = {name, portion};
+      if (name && portion) {
+          const newMed = {name, portion, taken: false};
 
-            setLists({...lists,[activeTab]:[...lists[activeTab], newMed]});
-        };
-    }
+          setLists({...lists,[activeTab]:[...lists[activeTab], newMed]});
+      };
+  }
 
-    const handleRemove = (name : string) => {
-        const confirmed = confirm(`Estas seguro de eliminar: ${name}?`);
-        if (confirmed) {
-            setLists({...lists,[activeTab]:lists[activeTab].filter(item => item.name !== name)})
-        }
-    }
+  const handleRemove = (name : string) => {
+      const confirmed = confirm(`Estas seguro de eliminar: ${name}?`);
+      if (confirmed) {
+          setLists({...lists,[activeTab]:lists[activeTab].filter(item => item.name !== name)})
+      }
+  }
 
-    const handleTaken = (name: string) => {
-        setLists({...lists, [activeTab]: lists[activeTab].map(item => 
-            item.name === name ? {...item, taken: !item.taken} : item )});
-    }
+  const handleTaken = (name: string) => {
+      setLists({...lists, [activeTab]: lists[activeTab].map(item => 
+          item.name === name ? {...item, taken: !item.taken} : item )});
+  }
 
   return (
     <div className={styles.card}>
       <header className={styles.title}>
         <h1 className={styles.titleText}>Recordatorio Pastillas</h1>
-        <Icon onClick={handleSettings} typeButton="editIcon" />
+        <div className={styles.setting}>
+          <p className={styles.date}>{loading ? "Obteniendo Fecha de hoy..." : todayDate}</p>
+          <Icon type="settings" onClick={handleSettings} />
+        </div>
       </header>
       <main className={styles.ListCard}>
-        <Tabs activeTab={activeTab} onChange={setActiveTab}/>
+        <Tabs data={tabs} onClick={handleTab} activeTab={activeTab} onChange={setActiveTab}/>
         <div>
-          {activeTab === "Desayuno" && <MedList setting={setting} data={lists[activeTab]} onToggle={handleTaken} onAdd={handleAdd} onRemove={handleRemove}/>}
-          {activeTab === "Almuerzo" && <MedList setting={setting} data={lists[activeTab]} onToggle={handleTaken} onAdd={handleAdd} onRemove={handleRemove}/>}
-          {activeTab === "Once" && <MedList setting={setting} data={lists[activeTab]} onToggle={handleTaken} onAdd={handleAdd} onRemove={handleRemove}/>}
-          {activeTab === "Noche" && <MedList setting={setting} data={lists[activeTab]} onToggle={handleTaken} onAdd={handleAdd} onRemove={handleRemove}/>}
+          <MedList setting={setting} data={lists[activeTab] || []} onToggle={handleTaken} onAdd={handleAdd} onRemove={handleRemove}/>
         </div>        
       </main>
     </div>

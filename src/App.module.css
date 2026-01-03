@@ -15,37 +15,60 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    min-height: 80vh;
+    min-height: 50vh;
     width: 100%;
     border: 2px solid #b3daf9;
     border-radius: 25px;
-    padding: 50px;
+    padding: 30px;
 }
 
 .ListCard {
     display: flex;
-    width: 600px;
-    justify-content: center;
+    width: 500px;
+    height: auto;
+    justify-content: start;
     align-items: center;
     flex-direction: column;
+    box-shadow: 6px 6px 8px 2px #0000;
+    background: rgb(255, 255, 255);
+    border-radius: 10px;
+    padding-bottom: 10px;
 }
 
 .title {
     display: flex;
-    top: -30px;
     justify-content: center;
     align-items: center;
     width: 100%;
+    flex-direction: column;
     position: relative;
+    padding-top: 20px;
+}
+
+.setting {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.date {
+    padding-right: 15px;
+}
+
+.icon {
+    color: red;
 }
 
 .titleText {
     color: rgb(2, 2, 22);
-    font-size: 3rem;
+    font-size: 2.3rem;
     font-weight: bold;
     letter-spacing: 2px;
-    padding: 5px;
     margin-left: 20px;
+    display: flex;
+    position: absolute;
+    top: -25px;
 }
 
 .buttons {

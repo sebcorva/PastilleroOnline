@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import styles from "./Button.module.css";
 
 type Props = {
     children: ReactNode;
@@ -9,7 +10,7 @@ type Props = {
 function Button({typeButton ,children, onClick}: Props) {
 
   return (
-    <button onClick= {onClick} className={`btn btn-${typeButton}`}>{children}</button>
+    <button onClick= {onClick} className={`btn btn-${typeButton} ${styles.button}`}>{children}</button>
   )
 }
 

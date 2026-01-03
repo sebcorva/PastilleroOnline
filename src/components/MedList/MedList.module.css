@@ -1,8 +1,25 @@
 .item {
     display: flex;
     justify-content: space-between;
+    padding-left: 30px;
+    width: 400px;
 }
 
 .card {
     background: rgb(255, 255, 255);
+    display: flex;
+    width: 400px;
+}
+
+.name {
+    width: 100px;
+}
+
+.portion {
+    width: 70px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
 }
