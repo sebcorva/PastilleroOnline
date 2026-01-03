@@ -8,35 +8,41 @@ type Props = {
     onToggle: (name: string) => void;
     data: { name: string; portion: string; taken: boolean }[];
     onAdd: () => void;
+    onHandle: () => void;
     onRemove: (name: string) => void;
 }
 
-function MedList({onRemove, onAdd, setting, data, onToggle}: Props) {
+function MedList({onRemove, onAdd, setting, data, onToggle, onHandle}: Props) {
 
   return (
     <div>
-        <div>
-            {data.map((item, index) => (
-                <div className={styles.card}>
-            <ul className="list bg-base-100 rounded-box">
-                <li className={[`list-row`, styles.item].join(' ')} key={index}> 
-                    <div className={styles.name}>{item.name}</div>
-                    <div className={styles.portion}>{item.portion}</div>
-                    {/* <div>{item.taken ? "activo" : "desactivo"}</div> */}
-                    <CheckBox checked = {item.taken} onChange={() => onToggle(item.name)} disabled = { item.taken }/>
-                    {setting && 
-                        <Button onClick={() => onRemove(item.name)} typeButton="error">Eliminar</Button>
-                    }
-                </li>
-            </ul>
-        </div>
-            ))}
-        </div>
+        {(data.length > 0) ? (
+            <div>
+                {data.map((item, index) => (
+                    <div className={styles.card}>
+                <ul className="list bg-base-100 rounded-box">
+                    <li className={[`list-row`, styles.item].join(' ')} key={index}> 
+                        <div className={styles.name}>{item.name}</div>
+                        <div className={styles.portion}>{item.portion}</div>
+                        {/* <div>{item.taken ? "activo" : "desactivo"}</div> */}
+                        <CheckBox checked = {item.taken} onChange={() => onToggle(item.name)} disabled = { item.taken }/>
+                        {setting && 
+                            <Button onClick={() => onRemove(item.name)} typeButton="error">Eliminar</Button>
+                        }
+                    </li>
+                </ul>
+            </div>
+                ))}
+            </div> ) : (
+         <p>No hay remedios ingresados</p>
+        )}
+        
         <div>
             {
             setting && 
             <div className={styles.buttons}>
-                <Button onClick={onAdd} typeButton="success">Agregar</Button>
+                <Button onClick={onHandle} typeButton="info">Agregar Pestaña</Button>
+                <Button onClick={onAdd} typeButton="success">Agregar Medicamento</Button>
             </div>
             }
         </div>

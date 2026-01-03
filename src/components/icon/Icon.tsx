@@ -1,4 +1,4 @@
-import { Settings, CirclePlus } from 'lucide-react';
+import { Settings, CirclePlus, CircleMinus } from 'lucide-react';
 import styles from "./Icon.module.css";
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
 const iconMap = {
   settings: Settings,
   plus: CirclePlus,
+  minus: CircleMinus
 };
 
 function icon({onClick, type}: Props) {

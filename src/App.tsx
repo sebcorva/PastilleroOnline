@@ -1,6 +1,7 @@
 import Tabs from "./components/tabs/Tabs";
 import Icon from "./components/icon/Icon";
 import MedList from "./components/MedList/MedList";
+import Button from "./components/button/Button";
 import styles from "./App.module.css";
 import React, { useState, useEffect } from "react";
 
@@ -74,7 +75,25 @@ function App() {
 
     setActiveTab(tabName);
     };
-  
+
+    const handleTabRemove = ( tabName) => {
+      const confirmed = confirm(`Estas seguro de eliminar: ${tabName}?`);
+      if (confirmed) {
+        const newLists = {...lists};
+        delete newLists[tabName];
+        setLists(newLists);
+
+        if (activeTab === tabName) {
+          const remainingTabs = Object.keys(newLists);
+          if (remainingTabs.length > 0) {
+            setActiveTab(remainingTabs[0]);
+          } else {
+            alert("Haz eliminado todas las pestañas");
+            setActiveTab(" ")
+          }
+        }
+      }
+    }
 
   const handleAdd = () => {
       const name = prompt("Nombre medicamento: ");
@@ -109,10 +128,19 @@ function App() {
         </div>
       </header>
       <main className={styles.ListCard}>
-        <Tabs data={tabs} onClick={handleTab} activeTab={activeTab} onChange={setActiveTab}/>
-        <div>
-          <MedList setting={setting} data={lists[activeTab] || []} onToggle={handleTaken} onAdd={handleAdd} onRemove={handleRemove}/>
-        </div>        
+        <Tabs setting={setting} data={tabs} onRemove={handleTabRemove} activeTab={activeTab} onChange={setActiveTab}/>
+        {tabs.length > 0 ? (
+          <div>
+          <MedList setting={setting} data={lists[activeTab] || []} onToggle={handleTaken} onAdd={handleAdd} onRemove={handleRemove} onHandle={handleTab}/>
+        </div> 
+        ) : (
+          <div className="no-tabs-message">
+            <p>No tienes ninguna categoría creada.</p>
+            <Button onClick={handleTab} typeButton="info">Agregar Pestaña</Button>
+          </div>
+        )
+      }
+               
       </main>
     </div>
   )
