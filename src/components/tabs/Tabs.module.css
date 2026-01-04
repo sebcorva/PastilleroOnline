@@ -1,5 +1,11 @@
 .tab {
     display: flex;
-    justify-content: center;
-    width: 500px;
+    justify-content: flex-start;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    align-items: center;
+    gap: 10px;
+    width: 80vw;
 }

@@ -1,5 +1,6 @@
 import CheckBox from "../checkBox/CheckBox";
 import Button from "../button/Button";
+import Icon from "../icon/Icon";
 import styles from "./MedList.module.css"
 
 type Props = {
@@ -14,7 +15,7 @@ type Props = {
 
 function MedList({onRemove, onAdd, setting, data, onToggle, onHandle}: Props) {
 
-  return (
+    return (
     <div>
         {(data.length > 0) ? (
             <div>
@@ -27,7 +28,7 @@ function MedList({onRemove, onAdd, setting, data, onToggle, onHandle}: Props) {
                         {/* <div>{item.taken ? "activo" : "desactivo"}</div> */}
                         <CheckBox checked = {item.taken} onChange={() => onToggle(item.name)} disabled = { item.taken }/>
                         {setting && 
-                            <Button onClick={() => onRemove(item.name)} typeButton="error">Eliminar</Button>
+                            <Icon type="trash" onClick={() => onRemove(item.name)}/>
                         }
                     </li>
                 </ul>

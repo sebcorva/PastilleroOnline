@@ -2,12 +2,9 @@
     stroke: #3f3f58;
     transition: all o.3 ease;
     cursor: pointer;
-    border: 2px solid #efeeee;
-    background: #ffffff;
-    width: 30px;
-    height: 30px;
-    padding: 2px;
-    border-radius: 50%
+    width: 4vw;
+    height: 4vh;
+    flex-shrink: 0;
 }
 
 .icon:hover {

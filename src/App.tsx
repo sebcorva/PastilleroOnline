@@ -3,11 +3,13 @@ import Icon from "./components/icon/Icon";
 import MedList from "./components/MedList/MedList";
 import Button from "./components/button/Button";
 import styles from "./App.module.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   
-  const [activeTab, setActiveTab] = useState("Desayuno");
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('pestaña-activa') || "Desayuno" /* cambiar a index[1] */
+  });
   const [setting, setSetting] = useState(false);
   const [todayDate, setTodayDate] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,10 +40,16 @@ function App() {
 
   const handleSettings = () => {
     setSetting(!setting)
-  }
+  };
 
-  const [lists, setLists] = useState({
-        Desayuno: [
+  const [lists, setLists] = useState(() => {
+    const saveData = localStorage.getItem('mis-medicamentos');
+    const lastDate = localStorage.getItem('ultima-actualizacion');
+
+    const today = todayDate;
+
+    let data = {
+       Desayuno: [
             { name: 'Vitamina A', portion: '2 gotas', taken: false},
             { name: 'Glutamina', portion: '3 gr.', taken: false},
             { name: 'Enzima Digestiva', portion: '1 capsula', taken: false}
@@ -57,9 +65,32 @@ function App() {
             { name: 'Bisiglinato de Magnesio', portion: '1 capsula', taken: false},
             { name: 'Sertralina', portion: '1 capsula', taken: false},
         ]
-    });
+    };
+
+    if (saveData !== null && saveData !== "undefined") {
+      return JSON.parse(saveData);
+    }
+
+    if (lastDate != today) {
+      Object.keys(data).forEach(tab => {
+        data[tab] = data[tab].map((med) => ({
+          ...med, taken: false
+        }));
+      });
+
+      localStorage.setItem('ultima-actualizacion', today)
+    }
+    return data;
+  });
 
   const tabs = Object.keys(lists);
+
+  useEffect(() => {
+    const textData = JSON.stringify(lists);
+
+    localStorage.setItem('mis-medicamentos', textData);
+    console.log("Datos guardados correctamente");
+  }, [lists]);
 
   const handleTab = () => {
     const input = prompt("Nombre nueva pestaña: ")
@@ -75,6 +106,10 @@ function App() {
 
     setActiveTab(tabName);
     };
+
+    useEffect(() => {
+      localStorage.setItem('pestaña-activa', activeTab);
+    }, [activeTab]);
 
     const handleTabRemove = ( tabName) => {
       const confirmed = confirm(`Estas seguro de eliminar: ${tabName}?`);
