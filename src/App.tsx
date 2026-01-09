@@ -4,12 +4,26 @@ import MedList from "./components/MedList/MedList";
 import Button from "./components/button/Button";
 import styles from "./App.module.css";
 import { useState, useEffect } from "react";
+import { supabase } from './lib/supabaseClient';
+import { useNavigate } from "react-router-dom";
 
 function App() {
-  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUser = async() => {
+      const { data: {session}} = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/app");
+      }
+    };
+    checkUser();
+  }, [navigate]);
+
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('pestaña-activa') || "Desayuno" /* cambiar a index[1] */
   });
+
   const [setting, setSetting] = useState(false);
   const [todayDate, setTodayDate] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +33,6 @@ function App() {
       try {
         const response = await fetch("http://worldtimeapi.org/api/timezone/America/Argentina/Salta");
         const data = await response.json();
-
         const date = new Date(data.datetime);
 
         const dayString = date.toLocaleDateString('es-ES', { weekday: 'long'});
@@ -44,9 +57,9 @@ function App() {
 
   const [lists, setLists] = useState(() => {
     const saveData = localStorage.getItem('mis-medicamentos');
-    const lastDate = localStorage.getItem('ultima-actualizacion');
-
-    const today = todayDate;
+    if (saveData !== null && saveData !== "undefined") {
+      return JSON.parse(saveData);
+    };
 
     let data = {
        Desayuno: [
@@ -66,20 +79,26 @@ function App() {
             { name: 'Sertralina', portion: '1 capsula', taken: false},
         ]
     };
+    useEffect(() => {
+      if (!todayDate) return;
 
-    if (saveData !== null && saveData !== "undefined") {
-      return JSON.parse(saveData);
-    }
+      const lastDay = localStorage.getItem('ultima-actializacion');
 
-    if (lastDate != today) {
-      Object.keys(data).forEach(tab => {
-        data[tab] = data[tab].map((med) => ({
-          ...med, taken: false
-        }));
-      });
+      if (lastDay != todayDate){
+        console.log("Nuevo dia detectado, reiniciando tabs...");
 
-      localStorage.setItem('ultima-actualizacion', today)
-    }
+        const resetLists = {...lists};
+        Object.keys(resetLists).forEach(tab => {
+          resetLists[tab] = resetLists[tab].map(med => ({
+            ...med, taken:false
+          }));
+        });
+
+        setLists(resetLists);
+        localStorage.setItem('ultima-actualizacion', todayDate);
+      }
+    }, [todayDate]);
+    
     return data;
   });
 
@@ -182,3 +201,4 @@ function App() {
 }
 
 export default App
+
